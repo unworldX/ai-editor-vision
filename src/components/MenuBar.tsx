@@ -13,7 +13,6 @@ import {
   MenubarSubTrigger,
   MenubarCheckboxItem,
 } from './ui/menubar';
-import { FileItem } from '../utils/mockData';
 import { 
   FilePlus,
   FolderOpen,
@@ -39,6 +38,13 @@ import {
   Minimize2,
 } from 'lucide-react';
 
+interface FileInfo {
+  id: string;
+  name: string;
+  extension: string;
+  type: string;
+}
+
 interface MenuBarProps {
   onNewFile: () => void;
   onDelete: () => void;
@@ -47,7 +53,7 @@ interface MenuBarProps {
   onPaste: () => void;
   onToggleTerminal: () => void;
   onToggleLayout: () => void;
-  activeFile: FileItem | null;
+  activeFile: FileInfo | null;
 }
 
 const MenuBar: React.FC<MenuBarProps> = ({

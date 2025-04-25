@@ -179,6 +179,12 @@ const Index: React.FC = () => {
   };
 
   const activeOpenFile = findOpenFileById(activeFileId);
+  
+  // Get active file for StatusBar
+  const getActiveFileForStatusBar = () => {
+    if (!activeFileId) return null;
+    return findFileById(files, activeFileId);
+  };
 
   return (
     <SidebarProvider>
@@ -191,7 +197,7 @@ const Index: React.FC = () => {
           onPaste={() => console.log('Paste')}
           onToggleTerminal={() => setShowTerminal(prev => !prev)}
           onToggleLayout={() => setLayout(prev => prev === 'default' ? 'split' : 'default')}
-          activeFile={activeFileInfo ? {name: activeFileInfo.name, extension: activeFileInfo.extension} : null}
+          activeFile={activeFileInfo}
         />
         
         <div className="flex flex-1 overflow-hidden">
@@ -239,7 +245,7 @@ const Index: React.FC = () => {
           )}
         </div>
         
-        <StatusBar currentFile={activeFile} />
+        <StatusBar currentFile={getActiveFileForStatusBar()} />
       </div>
     </SidebarProvider>
   );
