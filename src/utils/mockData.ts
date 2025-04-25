@@ -35,7 +35,7 @@ export const mockFiles: FileItem[] = [
             name: 'Button.tsx',
             type: 'file',
             extension: 'tsx',
-            content: `import React from 'react';\n\ninterface ButtonProps {\n  children: React.ReactNode;\n  onClick?: () => void;\n  variant?: 'primary' | 'secondary';\n}\n\nconst Button = ({ children, onClick, variant = 'primary' }: ButtonProps) => {\n  return (\n    <button \n      className={\\`btn btn-\\${variant}\\`}\n      onClick={onClick}\n    >\n      {children}\n    </button>\n  );\n};\n\nexport default Button;`
+            content: `import React from 'react';\n\ninterface ButtonProps {\n  children: React.ReactNode;\n  onClick?: () => void;\n  variant?: 'primary' | 'secondary';\n}\n\nconst Button = ({ children, onClick, variant = 'primary' }: ButtonProps) => {\n  return (\n    <button \n      className={\`btn btn-\${variant}\`}\n      onClick={onClick}\n    >\n      {children}\n    </button>\n  );\n};\n\nexport default Button;`
           }
         ]
       },
