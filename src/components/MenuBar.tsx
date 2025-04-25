@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   Menubar,
@@ -39,10 +38,8 @@ import {
 } from 'lucide-react';
 
 interface FileInfo {
-  id: string;
   name: string;
   extension: string;
-  type: string;
 }
 
 interface MenuBarProps {

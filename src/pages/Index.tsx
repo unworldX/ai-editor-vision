@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Editor from '../components/Editor';
@@ -177,7 +178,12 @@ const Index: React.FC = () => {
   // Get active file for StatusBar
   const getActiveFileForStatusBar = () => {
     if (!activeFileId) return null;
-    return findFileById(files, activeFileId);
+    const file = findFileById(files, activeFileId);
+    if (!file) return null;
+    return {
+      name: file.name,
+      extension: file.extension || ''
+    };
   };
 
   return (
