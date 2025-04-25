@@ -14,7 +14,7 @@ import {
   FilePlus,
   Trash2,
   Copy,
-  Paste,
+  ClipboardCopy,
   Terminal,
   LayoutDashboard,
   Pencil,
@@ -70,7 +70,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
               <MenubarShortcut>⌘C</MenubarShortcut>
             </MenubarItem>
             <MenubarItem onClick={onPaste}>
-              <Paste className="w-4 h-4 mr-2" />
+              <ClipboardCopy className="w-4 h-4 mr-2" />
               Paste
               <MenubarShortcut>⌘V</MenubarShortcut>
             </MenubarItem>

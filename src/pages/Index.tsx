@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Editor from '../components/Editor';
@@ -73,7 +74,22 @@ const Index: React.FC = () => {
       extension: 'txt'
     };
     setFiles(prev => [...prev, newFile]);
-    handleFileSelect(newFile);
+    
+    // Create an OpenFile from FileItem, ensuring all required fields are present
+    if (newFile.content !== undefined) {
+      const newOpenFile: OpenFile = {
+        id: newFile.id,
+        name: newFile.name,
+        content: newFile.content,
+        extension: newFile.extension || '',
+        isActive: true
+      };
+      
+      setOpenFiles(prev => 
+        prev.map(f => ({ ...f, isActive: false })).concat(newOpenFile)
+      );
+      setActiveFileId(newFile.id);
+    }
   };
 
   const handleDelete = () => {
