@@ -143,7 +143,11 @@ const Index: React.FC = () => {
     );
   };
 
-  const activeFile = activeFileId ? findFileById(files, activeFileId) : null;
+  const activeFile = activeFileId ? files.find(f => f.id === activeFileId) : null;
+  const formattedActiveFile = activeFile ? {
+    name: activeFile.name,
+    extension: activeFile.extension || ''
+  } : null;
 
   useEffect(() => {
     if (openFiles.length === 0) {
@@ -165,7 +169,7 @@ const Index: React.FC = () => {
           onPaste={() => console.log('Paste')}
           onToggleTerminal={() => setShowTerminal(prev => !prev)}
           onToggleLayout={() => setLayout(prev => prev === 'default' ? 'split' : 'default')}
-          activeFile={activeFile}
+          activeFile={formattedActiveFile}
         />
         
         <div className="flex flex-1 overflow-hidden">
@@ -208,7 +212,7 @@ const Index: React.FC = () => {
               onNewFile={handleNewFile}
               onDelete={handleDelete}
               onRename={handleRename}
-              activeFile={activeFile}
+              activeFile={formattedActiveFile}
             />
           )}
         </div>
