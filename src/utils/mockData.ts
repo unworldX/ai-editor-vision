@@ -10,6 +10,13 @@ export interface FileItem {
   expanded?: boolean;
 }
 
+export interface Message {
+  id: string;
+  sender: 'user' | 'ai';
+  content: string;
+  timestamp: Date;
+}
+
 export const mockFiles: FileItem[] = [
   {
     id: '1',
@@ -78,7 +85,7 @@ export const mockFiles: FileItem[] = [
   }
 ];
 
-export const mockAiMessages = [
+export const mockAiMessages: Message[] = [
   {
     id: '1',
     sender: 'ai',

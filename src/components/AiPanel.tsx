@@ -1,14 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Send } from 'lucide-react';
-import { mockAiMessages } from '../utils/mockData';
-
-interface Message {
-  id: string;
-  sender: 'user' | 'ai';
-  content: string;
-  timestamp: Date;
-}
+import { mockAiMessages, Message } from '../utils/mockData';
 
 const AiPanel: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>(mockAiMessages);
