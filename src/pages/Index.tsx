@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Editor from '../components/Editor';
@@ -84,7 +85,7 @@ const Index: React.FC = () => {
       id: newFile.id,
       name: newFile.name,
       content: newFile.content || '',
-      extension: newFile.extension,
+      extension: newFile.extension || '',
       isActive: true
     };
     
@@ -143,20 +144,41 @@ const Index: React.FC = () => {
     );
   };
 
-  const activeFile = activeFileId ? files.find(f => f.id === activeFileId) : null;
-  const formattedActiveFile = activeFile ? {
-    name: activeFile.name,
-    extension: activeFile.extension || ''
-  } : null;
+  // Create a properly typed active file for the AI Features component
+  const getActiveFileInfo = (): { id: string; name: string; extension: string; type: string } | null => {
+    if (!activeFileId) return null;
+    
+    const activeFile = findFileById(files, activeFileId);
+    if (!activeFile) return null;
+    
+    return {
+      id: activeFile.id,
+      name: activeFile.name,
+      extension: activeFile.extension || '',
+      type: activeFile.type
+    };
+  };
+
+  const activeFileInfo = getActiveFileInfo();
 
   useEffect(() => {
     if (openFiles.length === 0) {
       const readmeFile = findFileById(files, '9');
-      if (readmeFile && readmeFile.type === 'file' && readmeFile.content !== undefined) {
-        handleFileSelect(readmeFile);
+      if (readmeFile && readmeFile.type === 'file') {
+        if (readmeFile.content !== undefined) {
+          handleFileSelect(readmeFile);
+        }
       }
     }
   }, []);
+
+  // Find the active file as an OpenFile type for the Editor
+  const findOpenFileById = (id: string | null): OpenFile | undefined => {
+    if (!id) return undefined;
+    return openFiles.find(file => file.id === id);
+  };
+
+  const activeOpenFile = findOpenFileById(activeFileId);
 
   return (
     <SidebarProvider>
@@ -169,7 +191,7 @@ const Index: React.FC = () => {
           onPaste={() => console.log('Paste')}
           onToggleTerminal={() => setShowTerminal(prev => !prev)}
           onToggleLayout={() => setLayout(prev => prev === 'default' ? 'split' : 'default')}
-          activeFile={formattedActiveFile}
+          activeFile={activeFileInfo ? {name: activeFileInfo.name, extension: activeFileInfo.extension} : null}
         />
         
         <div className="flex flex-1 overflow-hidden">
@@ -196,8 +218,8 @@ const Index: React.FC = () => {
             </div>
             
             <div className={`flex flex-1 ${layout === 'split' ? 'flex-row' : ''}`}>
-              <Editor file={activeFile} />
-              {layout === 'split' && <Editor file={activeFile} />}
+              <Editor file={activeOpenFile} />
+              {layout === 'split' && <Editor file={activeOpenFile} />}
             </div>
             
             {showTerminal && (
@@ -212,7 +234,7 @@ const Index: React.FC = () => {
               onNewFile={handleNewFile}
               onDelete={handleDelete}
               onRename={handleRename}
-              activeFile={formattedActiveFile}
+              activeFile={activeFileInfo ? {name: activeFileInfo.name, extension: activeFileInfo.extension} : null}
             />
           )}
         </div>
