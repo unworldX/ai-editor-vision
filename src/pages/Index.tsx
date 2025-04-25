@@ -3,6 +3,7 @@ import Sidebar from '../components/Sidebar';
 import Editor from '../components/Editor';
 import AiPanel from '../components/AiPanel';
 import StatusBar from '../components/StatusBar';
+import MenuBar from '../components/MenuBar';
 import Tab from '../components/Tab';
 import { mockFiles, FileItem, OpenFile } from '../utils/mockData';
 
@@ -11,14 +12,14 @@ const Index: React.FC = () => {
   const [openFiles, setOpenFiles] = useState<OpenFile[]>([]);
   const [activeFileId, setActiveFileId] = useState<string | null>(null);
   const [showAiPanel, setShowAiPanel] = useState(true);
+  const [showTerminal, setShowTerminal] = useState(false);
+  const [layout, setLayout] = useState<'default' | 'split'>('default');
 
   const handleFileSelect = (file: FileItem) => {
     if (file.type === 'file') {
-      // Check if file is already open
       const isOpen = openFiles.some(f => f.id === file.id);
       
       if (!isOpen && file.content) {
-        // Add to open files
         setOpenFiles([
           ...openFiles.map(f => ({ ...f, isActive: false })),
           { 
@@ -31,7 +32,6 @@ const Index: React.FC = () => {
         ]);
       }
       
-      // Set as active
       setActiveFileId(file.id);
       setOpenFiles(prev => prev.map(f => ({
         ...f,
@@ -52,7 +52,6 @@ const Index: React.FC = () => {
     const newOpenFiles = openFiles.filter(f => f.id !== id);
     setOpenFiles(newOpenFiles);
     
-    // Set new active tab if the closed one was active
     if (activeFileId === id && newOpenFiles.length > 0) {
       const newActiveId = newOpenFiles[newOpenFiles.length - 1].id;
       setActiveFileId(newActiveId);
@@ -65,8 +64,68 @@ const Index: React.FC = () => {
     }
   };
   
-  const activeFile = openFiles.find(f => f.isActive);
-  
+  const handleNewFile = () => {
+    const newFile: FileItem = {
+      id: Date.now().toString(),
+      name: 'untitled.txt',
+      type: 'file',
+      content: '',
+      extension: 'txt'
+    };
+    setFiles(prev => [...prev, newFile]);
+    handleFileSelect(newFile);
+  };
+
+  const handleDelete = () => {
+    if (!activeFileId) return;
+    
+    setFiles(prev => {
+      const deleteFileFromTree = (items: FileItem[]): FileItem[] => {
+        return items.filter(item => {
+          if (item.id === activeFileId) return false;
+          if (item.children) {
+            item.children = deleteFileFromTree(item.children);
+          }
+          return true;
+        });
+      };
+      
+      return deleteFileFromTree(prev);
+    });
+    
+    handleTabClose(activeFileId);
+  };
+
+  const handleRename = () => {
+    if (!activeFileId) return;
+    const newName = window.prompt('Enter new name:', activeFile?.name);
+    if (!newName) return;
+
+    setFiles(prev => {
+      const renameInTree = (items: FileItem[]): FileItem[] => {
+        return items.map(item => {
+          if (item.id === activeFileId) {
+            return { ...item, name: newName };
+          }
+          if (item.children) {
+            item.children = renameInTree(item.children);
+          }
+          return item;
+        });
+      };
+      
+      return renameInTree(prev);
+    });
+
+    setOpenFiles(prev => 
+      prev.map(f => 
+        f.id === activeFileId ? { ...f, name: newName } : f
+      )
+    );
+  };
+
+  const activeFile = files.find(f => f.id === activeFileId) || null;
+
   useEffect(() => {
     if (openFiles.length === 0) {
       const readmeFile = findFileById(files, '9');
@@ -75,16 +134,24 @@ const Index: React.FC = () => {
       }
     }
   }, []);
-  
+
   return (
     <div className="flex flex-col h-screen bg-background text-foreground">
+      <MenuBar
+        onNewFile={handleNewFile}
+        onDelete={handleDelete}
+        onRename={handleRename}
+        onCopy={() => console.log('Copy')}
+        onPaste={() => console.log('Paste')}
+        onToggleTerminal={() => setShowTerminal(prev => !prev)}
+        onToggleLayout={() => setLayout(prev => prev === 'default' ? 'split' : 'default')}
+        activeFile={activeFile}
+      />
+      
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
         <Sidebar files={files} onFileSelect={handleFileSelect} />
         
-        {/* Main editor area */}
         <div className="flex flex-col flex-1 overflow-hidden">
-          {/* Tabs */}
           <div className="flex h-9 bg-sidebar overflow-x-auto scrollbar-hide">
             {openFiles.map(file => (
               <Tab 
@@ -98,15 +165,21 @@ const Index: React.FC = () => {
             ))}
           </div>
           
-          {/* Editor */}
-          <Editor file={activeFile} />
+          <div className={`flex flex-1 ${layout === 'split' ? 'flex-row' : ''}`}>
+            <Editor file={activeFile} />
+            {layout === 'split' && <Editor file={activeFile} />}
+          </div>
+          
+          {showTerminal && (
+            <div className="h-48 border-t border-border bg-sidebar p-2">
+              <div className="font-mono text-sm">Terminal (Coming soon...)</div>
+            </div>
+          )}
         </div>
         
-        {/* AI Assistant Panel */}
         {showAiPanel && <AiPanel onClose={() => setShowAiPanel(false)} />}
       </div>
       
-      {/* Status Bar */}
       <StatusBar currentFile={activeFile} />
     </div>
   );
