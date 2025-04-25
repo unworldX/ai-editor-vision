@@ -5,7 +5,9 @@ import AiPanel from '../components/AiPanel';
 import StatusBar from '../components/StatusBar';
 import MenuBar from '../components/MenuBar';
 import Tab from '../components/Tab';
+import ActivityBar from '../components/ActivityBar';
 import { mockFiles, FileItem, OpenFile } from '../utils/mockData';
+import { SidebarProvider } from '@/components/ui/sidebar';
 
 const Index: React.FC = () => {
   const [files, setFiles] = useState<FileItem[]>(mockFiles);
@@ -14,6 +16,7 @@ const Index: React.FC = () => {
   const [showAiPanel, setShowAiPanel] = useState(true);
   const [showTerminal, setShowTerminal] = useState(false);
   const [layout, setLayout] = useState<'default' | 'split'>('default');
+  const [activeSection, setActiveSection] = useState('explorer');
 
   const handleFileSelect = (file: FileItem) => {
     if (file.type === 'file') {
@@ -41,7 +44,7 @@ const Index: React.FC = () => {
       })));
     }
   };
-  
+
   const handleTabSelect = (id: string) => {
     setActiveFileId(id);
     setOpenFiles(prev => prev.map(f => ({
@@ -49,7 +52,7 @@ const Index: React.FC = () => {
       isActive: f.id === id
     })));
   };
-  
+
   const handleTabClose = (id: string) => {
     const newOpenFiles = openFiles.filter(f => f.id !== id);
     setOpenFiles(newOpenFiles);
@@ -65,7 +68,7 @@ const Index: React.FC = () => {
       setActiveFileId(null);
     }
   };
-  
+
   const handleNewFile = () => {
     const newFile: FileItem = {
       id: Date.now().toString(),
@@ -76,20 +79,18 @@ const Index: React.FC = () => {
     };
     setFiles(prev => [...prev, newFile]);
     
-    if (newFile.content !== undefined) {
-      const newOpenFile: OpenFile = {
-        id: newFile.id,
-        name: newFile.name,
-        content: newFile.content,
-        extension: newFile.extension || '',
-        isActive: true
-      };
-      
-      setOpenFiles(prev => 
-        prev.map(f => ({ ...f, isActive: false })).concat(newOpenFile)
-      );
-      setActiveFileId(newFile.id);
-    }
+    const newOpenFile: OpenFile = {
+      id: newFile.id,
+      name: newFile.name,
+      content: newFile.content || '',
+      extension: newFile.extension || '',
+      isActive: true
+    };
+    
+    setOpenFiles(prev => 
+      prev.map(f => ({ ...f, isActive: false })).concat(newOpenFile)
+    );
+    setActiveFileId(newFile.id);
   };
 
   const handleDelete = () => {
@@ -152,52 +153,60 @@ const Index: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen bg-background text-foreground">
-      <MenuBar
-        onNewFile={handleNewFile}
-        onDelete={handleDelete}
-        onRename={handleRename}
-        onCopy={() => console.log('Copy')}
-        onPaste={() => console.log('Paste')}
-        onToggleTerminal={() => setShowTerminal(prev => !prev)}
-        onToggleLayout={() => setLayout(prev => prev === 'default' ? 'split' : 'default')}
-        activeFile={activeFile}
-      />
-      
-      <div className="flex flex-1 overflow-hidden">
-        <Sidebar files={files} onFileSelect={handleFileSelect} />
+    <SidebarProvider>
+      <div className="flex flex-col h-screen bg-background text-foreground">
+        <MenuBar
+          onNewFile={handleNewFile}
+          onDelete={handleDelete}
+          onRename={handleRename}
+          onCopy={() => console.log('Copy')}
+          onPaste={() => console.log('Paste')}
+          onToggleTerminal={() => setShowTerminal(prev => !prev)}
+          onToggleLayout={() => setLayout(prev => prev === 'default' ? 'split' : 'default')}
+          activeFile={activeFile}
+        />
         
-        <div className="flex flex-col flex-1 overflow-hidden">
-          <div className="flex h-9 bg-sidebar overflow-x-auto scrollbar-hide">
-            {openFiles.map(file => (
-              <Tab 
-                key={file.id}
-                id={file.id}
-                name={file.name}
-                isActive={file.isActive || false}
-                onSelect={handleTabSelect}
-                onClose={handleTabClose}
-              />
-            ))}
-          </div>
-          
-          <div className={`flex flex-1 ${layout === 'split' ? 'flex-row' : ''}`}>
-            <Editor file={activeFile} />
-            {layout === 'split' && <Editor file={activeFile} />}
-          </div>
-          
-          {showTerminal && (
-            <div className="h-48 border-t border-border bg-sidebar p-2">
-              <div className="font-mono text-sm">Terminal (Coming soon...)</div>
-            </div>
+        <div className="flex flex-1 overflow-hidden">
+          <ActivityBar 
+            activeSection={activeSection}
+            onSectionChange={setActiveSection}
+          />
+          {activeSection === 'explorer' && (
+            <Sidebar files={files} onFileSelect={handleFileSelect} />
           )}
+          
+          <div className="flex flex-col flex-1 overflow-hidden">
+            <div className="flex h-9 bg-sidebar overflow-x-auto scrollbar-hide">
+              {openFiles.map(file => (
+                <Tab 
+                  key={file.id}
+                  id={file.id}
+                  name={file.name}
+                  isActive={file.isActive}
+                  onSelect={handleTabSelect}
+                  onClose={handleTabClose}
+                />
+              ))}
+            </div>
+            
+            <div className={`flex flex-1 ${layout === 'split' ? 'flex-row' : ''}`}>
+              <Editor file={activeFile} />
+              {layout === 'split' && <Editor file={activeFile} />}
+            </div>
+            
+            {showTerminal && (
+              <div className="h-48 border-t border-border bg-sidebar p-2">
+                <div className="font-mono text-sm">Terminal (Coming soon...)</div>
+              </div>
+            )}
+          </div>
+          
+          {showAiPanel && <AiPanel onClose={() => setShowAiPanel(false)} />}
         </div>
         
-        {showAiPanel && <AiPanel onClose={() => setShowAiPanel(false)} />}
+        <StatusBar currentFile={activeFile} />
       </div>
-      
-      <StatusBar currentFile={activeFile} />
-    </div>
+    </SidebarProvider>
   );
 };
 
