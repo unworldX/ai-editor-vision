@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
-import { FolderOpen, Search, GitBranch, Bug, Extension, TestTube } from 'lucide-react';
+import { FolderOpen, Search, GitBranch, Bug, Package, TestTube } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ActivityBarProps {
@@ -14,7 +14,7 @@ const activities = [
   { id: 'search', icon: Search, label: 'Search' },
   { id: 'source-control', icon: GitBranch, label: 'Source Control' },
   { id: 'run-debug', icon: Bug, label: 'Run and Debug' },
-  { id: 'extensions', icon: Extension, label: 'Extensions' },
+  { id: 'extensions', icon: Package, label: 'Extensions' },
   { id: 'testing', icon: TestTube, label: 'Testing' }
 ];
 

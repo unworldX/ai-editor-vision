@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Editor from '../components/Editor';
@@ -88,7 +89,7 @@ const Index: React.FC = () => {
     };
     
     setOpenFiles(prev => 
-      prev.map(f => ({ ...f, isActive: false })).concat(newOpenFile)
+      prev.map(f => ({ ...f, isActive: false })).concat([newOpenFile])
     );
     setActiveFileId(newFile.id);
   };
@@ -115,6 +116,7 @@ const Index: React.FC = () => {
 
   const handleRename = () => {
     if (!activeFileId) return;
+    const activeFile = findFileById(files, activeFileId);
     const newName = window.prompt('Enter new name:', activeFile?.name);
     if (!newName) return;
 
@@ -141,7 +143,7 @@ const Index: React.FC = () => {
     );
   };
 
-  const activeFile = files.find(f => f.id === activeFileId) || null;
+  const activeFile = activeFileId ? findFileById(files, activeFileId) : null;
 
   useEffect(() => {
     if (openFiles.length === 0) {
