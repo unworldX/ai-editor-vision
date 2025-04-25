@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Editor from '../components/Editor';
 import AiPanel from '../components/AiPanel';
+import AiFeatures from '../components/AiFeatures';
 import StatusBar from '../components/StatusBar';
 import MenuBar from '../components/MenuBar';
 import Tab from '../components/Tab';
@@ -84,12 +84,12 @@ const Index: React.FC = () => {
       id: newFile.id,
       name: newFile.name,
       content: newFile.content || '',
-      extension: newFile.extension || '',
+      extension: newFile.extension,
       isActive: true
     };
     
     setOpenFiles(prev => 
-      prev.map(f => ({ ...f, isActive: false })).concat([newOpenFile])
+      [...prev.map(f => ({ ...f, isActive: false })), newOpenFile]
     );
     setActiveFileId(newFile.id);
   };
@@ -184,7 +184,7 @@ const Index: React.FC = () => {
                   key={file.id}
                   id={file.id}
                   name={file.name}
-                  isActive={file.isActive}
+                  isActive={file.isActive || false}
                   onSelect={handleTabSelect}
                   onClose={handleTabClose}
                 />
@@ -203,7 +203,14 @@ const Index: React.FC = () => {
             )}
           </div>
           
-          {showAiPanel && <AiPanel onClose={() => setShowAiPanel(false)} />}
+          {showAiPanel && (
+            <AiFeatures
+              onNewFile={handleNewFile}
+              onDelete={handleDelete}
+              onRename={handleRename}
+              activeFile={activeFile}
+            />
+          )}
         </div>
         
         <StatusBar currentFile={activeFile} />
