@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Editor from '../components/Editor';
@@ -144,18 +143,14 @@ const Index: React.FC = () => {
     );
   };
 
-  // Create a properly typed active file for the AI Features component
-  const getActiveFileInfo = (): { id: string; name: string; extension: string; type: string } | null => {
+  // Get active file info for AiFeatures
+  const getActiveFileInfo = () => {
     if (!activeFileId) return null;
-    
     const activeFile = findFileById(files, activeFileId);
     if (!activeFile) return null;
-    
     return {
-      id: activeFile.id,
       name: activeFile.name,
-      extension: activeFile.extension || '',
-      type: activeFile.type
+      extension: activeFile.extension || ''
     };
   };
 
@@ -172,7 +167,6 @@ const Index: React.FC = () => {
     }
   }, []);
 
-  // Find the active file as an OpenFile type for the Editor
   const findOpenFileById = (id: string | null): OpenFile | undefined => {
     if (!id) return undefined;
     return openFiles.find(file => file.id === id);
@@ -236,12 +230,7 @@ const Index: React.FC = () => {
           </div>
           
           {showAiPanel && (
-            <AiFeatures
-              onNewFile={handleNewFile}
-              onDelete={handleDelete}
-              onRename={handleRename}
-              activeFile={activeFileInfo ? {name: activeFileInfo.name, extension: activeFileInfo.extension} : null}
-            />
+            <AiFeatures activeFile={activeFileInfo} />
           )}
         </div>
         
