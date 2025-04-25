@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Editor from '../components/Editor';
@@ -20,16 +19,18 @@ const Index: React.FC = () => {
     if (file.type === 'file') {
       const isOpen = openFiles.some(f => f.id === file.id);
       
-      if (!isOpen && file.content) {
-        setOpenFiles([
-          ...openFiles.map(f => ({ ...f, isActive: false })),
-          { 
-            id: file.id, 
-            name: file.name, 
-            content: file.content,
-            extension: file.extension || '',
-            isActive: true 
-          }
+      if (!isOpen && file.content !== undefined) {
+        const newOpenFile: OpenFile = {
+          id: file.id,
+          name: file.name,
+          content: file.content,
+          extension: file.extension || '',
+          isActive: true
+        };
+        
+        setOpenFiles(prev => [
+          ...prev.map(f => ({ ...f, isActive: false })),
+          newOpenFile
         ]);
       }
       
@@ -75,7 +76,6 @@ const Index: React.FC = () => {
     };
     setFiles(prev => [...prev, newFile]);
     
-    // Create an OpenFile from FileItem, ensuring all required fields are present
     if (newFile.content !== undefined) {
       const newOpenFile: OpenFile = {
         id: newFile.id,
@@ -145,7 +145,7 @@ const Index: React.FC = () => {
   useEffect(() => {
     if (openFiles.length === 0) {
       const readmeFile = findFileById(files, '9');
-      if (readmeFile && readmeFile.type === 'file' && readmeFile.content) {
+      if (readmeFile && readmeFile.type === 'file' && readmeFile.content !== undefined) {
         handleFileSelect(readmeFile);
       }
     }
