@@ -1,9 +1,12 @@
-
 import React, { useState, useRef, useEffect } from 'react';
-import { Send } from 'lucide-react';
+import { Send, X } from 'lucide-react';
 import { mockAiMessages, Message } from '../utils/mockData';
 
-const AiPanel: React.FC = () => {
+interface AiPanelProps {
+  onClose?: () => void;
+}
+
+const AiPanel: React.FC<AiPanelProps> = ({ onClose }) => {
   const [messages, setMessages] = useState<Message[]>(mockAiMessages);
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -42,7 +45,6 @@ const AiPanel: React.FC = () => {
     }, 1000);
   };
 
-  // Format code in messages
   const formatMessage = (content: string) => {
     if (content.includes('```')) {
       const parts = content.split('```');
@@ -69,8 +71,17 @@ const AiPanel: React.FC = () => {
 
   return (
     <div className="w-80 h-full bg-sidebar border-l border-border flex flex-col">
-      <div className="p-2 border-b border-border">
+      <div className="p-2 border-b border-border flex justify-between items-center">
         <h3 className="font-medium text-sm uppercase tracking-wide text-muted-foreground">AI Assistant</h3>
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="p-1 hover:bg-secondary/50 rounded-sm"
+            aria-label="Close AI Panel"
+          >
+            <X className="w-4 h-4 text-muted-foreground" />
+          </button>
+        )}
       </div>
       
       <div className="flex-1 overflow-y-auto p-4">

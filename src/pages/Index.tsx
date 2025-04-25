@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Editor from '../components/Editor';
@@ -11,7 +10,8 @@ const Index: React.FC = () => {
   const [files, setFiles] = useState<FileItem[]>(mockFiles);
   const [openFiles, setOpenFiles] = useState<OpenFile[]>([]);
   const [activeFileId, setActiveFileId] = useState<string | null>(null);
-  
+  const [showAiPanel, setShowAiPanel] = useState(true);
+
   const handleFileSelect = (file: FileItem) => {
     if (file.type === 'file') {
       // Check if file is already open
@@ -67,7 +67,6 @@ const Index: React.FC = () => {
   
   const activeFile = openFiles.find(f => f.isActive);
   
-  // Open README.md by default if no files are open
   useEffect(() => {
     if (openFiles.length === 0) {
       const readmeFile = findFileById(files, '9');
@@ -104,7 +103,7 @@ const Index: React.FC = () => {
         </div>
         
         {/* AI Assistant Panel */}
-        <AiPanel />
+        {showAiPanel && <AiPanel onClose={() => setShowAiPanel(false)} />}
       </div>
       
       {/* Status Bar */}
@@ -113,7 +112,6 @@ const Index: React.FC = () => {
   );
 };
 
-// Helper function to find a file by ID in the nested structure
 const findFileById = (files: FileItem[], id: string): FileItem | null => {
   for (const file of files) {
     if (file.id === id) return file;
