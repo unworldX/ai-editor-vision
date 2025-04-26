@@ -1,3 +1,4 @@
+
 import React from 'react';
 import EditorComponent from './editor/EditorComponent';
 import { FileExplorer } from './components/FileExplorer';
@@ -9,6 +10,10 @@ import { TitleBar } from './components/TitleBar';
 import { Splitter } from './components/Splitter';
 import { useExtensionStore } from './store/extensionStore';
 import { AISidebar } from './components/AISidebar';
+import { MonacoService } from './services/MonacoService';
+import { EditorService } from './services/EditorService';
+import { EditorEngine } from './editor/EditorEngine';
+import { Extension } from './types/extension';
 
 const demoExtension: Extension = {
   id: 'demo-extension',
