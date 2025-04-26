@@ -2,7 +2,7 @@
 import React from 'react';
 import { useAIStore } from '../services/AIService';
 import { Bot, Brain, Code, Sparkles, Wand } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '../components/ui/button';
 
 const iconMap: Record<string, React.ReactNode> = {
   'brain': <Brain className="w-4 h-4" />,
@@ -36,16 +36,14 @@ export const AISidebar: React.FC = () => {
                     {iconMap[feature.icon || 'bot']}
                     <h4 className="text-sm font-medium">{feature.name}</h4>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className={`px-2 py-1 text-xs ${
+                  <button
+                    className={`px-2 py-1 text-xs rounded bg-[#2d2d2d] hover:bg-[#3a3a3a] ${
                       feature.enabled ? 'text-green-400' : 'text-gray-400'
                     }`}
                     onClick={() => toggleFeature(feature.id)}
                   >
                     {feature.enabled ? 'Enabled' : 'Disabled'}
-                  </Button>
+                  </button>
                 </div>
                 <p className="text-xs text-gray-400">{feature.description}</p>
                 {feature.shortcut && (
