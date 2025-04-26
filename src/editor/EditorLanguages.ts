@@ -1,38 +1,47 @@
-
 export const getLanguageFromFilename = (filename: string): string => {
   if (!filename) return 'plaintext';
+
+  const extension = filename.split('.').pop()?.toLowerCase() || '';
   
   const extensionMap: Record<string, string> = {
     // JavaScript and TypeScript
-    js: 'javascript', jsx: 'javascript',
-    ts: 'typescript', tsx: 'typescript',
+    'js': 'javascript',
+    'jsx': 'javascript',
+    'ts': 'typescript',
+    'tsx': 'typescript',
     
-    // Web technologies
-    json: 'json', html: 'html', css: 'css',
-    scss: 'scss', less: 'less', xml: 'xml',
+    // Web
+    'html': 'html',
+    'css': 'css',
+    'scss': 'scss',
+    'less': 'less',
+    'json': 'json',
     
-    // Server languages
-    php: 'php', py: 'python', rb: 'ruby',
-    java: 'java', c: 'c', cpp: 'cpp', cs: 'csharp',
-    go: 'go', rs: 'rust', swift: 'swift',
+    // Other languages
+    'py': 'python',
+    'java': 'java',
+    'c': 'c',
+    'cpp': 'cpp',
+    'cs': 'csharp',
+    'go': 'go',
+    'rs': 'rust',
+    'php': 'php',
+    'rb': 'ruby',
+    'swift': 'swift',
     
-    // Configuration and other
-    sh: 'shell', sql: 'sql', yaml: 'yaml', yml: 'yaml',
-    toml: 'toml', markdown: 'markdown', md: 'markdown',
-    dockerfile: 'dockerfile', makefile: 'makefile',
-    ini: 'ini', bat: 'bat', ps1: 'powershell',
-    
-    // Special handling for common extensions
-    gitignore: 'plaintext',
-    npmrc: 'plaintext',
-    env: 'plaintext'
+    // Markup and config
+    'md': 'markdown',
+    'xml': 'xml',
+    'yaml': 'yaml',
+    'yml': 'yaml',
+    'toml': 'ini',
+    'ini': 'ini',
+    'sql': 'sql',
+    'graphql': 'graphql',
+    'sh': 'shell',
+    'bat': 'bat',
+    'dockerfile': 'dockerfile',
   };
-  
-  const parts = filename.split('/');
-  const lastPart = parts[parts.length - 1];
-  const extension = lastPart.includes('.')
-    ? lastPart.split('.').pop()?.toLowerCase() || ''
-    : lastPart.toLowerCase();
   
   return extensionMap[extension] || 'plaintext';
 };

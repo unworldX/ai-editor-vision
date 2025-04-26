@@ -1,5 +1,6 @@
 
 import * as monaco from 'monaco-editor';
+import { MonacoAIService } from '../services/monaco-ai-service';
 
 export const configureMonaco = () => {
   // Configure TypeScript settings
@@ -27,6 +28,9 @@ export const configureMonaco = () => {
 
   // Set as default theme
   monaco.editor.setTheme('custom-dark');
+
+  // Initialize AI service
+  MonacoAIService.getInstance();
 };
 
 export const defaultEditorOptions: monaco.editor.IStandaloneEditorConstructionOptions = {
@@ -37,5 +41,14 @@ export const defaultEditorOptions: monaco.editor.IStandaloneEditorConstructionOp
   scrollBeyondLastLine: false,
   automaticLayout: true,
   tabSize: 2,
-  wordWrap: 'on'
+  wordWrap: 'on',
+  suggestOnTriggerCharacters: true,
+  snippetSuggestions: 'inline',
+  contextmenu: true,
+  quickSuggestions: true,
+  scrollbar: {
+    verticalScrollbarSize: 10,
+    horizontalScrollbarSize: 10,
+    alwaysConsumeMouseWheel: false
+  }
 };
