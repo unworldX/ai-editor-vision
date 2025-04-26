@@ -82,11 +82,9 @@ export class MonacoService {
   }
 
   private setupLanguageDefaults(): void {
-    // Configure TypeScript/JavaScript defaults
     monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
     monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
-    
-    // Set compiler options
+
     monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
       target: monaco.languages.typescript.ScriptTarget.ES2020,
       allowNonTsExtensions: true,
@@ -102,7 +100,6 @@ export class MonacoService {
   }
 
   private initializeWorker(): void {
-    // Configure web worker
     const workerUrl = new URL('monaco-editor/esm/vs/language/typescript/ts.worker', import.meta.url);
     window.MonacoEnvironment = {
       getWorkerUrl: function (moduleId, label) {
@@ -116,22 +113,20 @@ export class MonacoService {
 
   public registerEditor(editor: monaco.editor.IStandaloneCodeEditor): void {
     this.editorInstances.add(editor);
-    
-    // Add performance monitoring
     this.setupPerformanceMonitoring(editor);
   }
 
   private setupPerformanceMonitoring(editor: monaco.editor.IStandaloneCodeEditor): void {
     let lastRenderTime = performance.now();
-    
+
     editor.onDidLayoutChange(() => {
       const currentTime = performance.now();
       const renderTime = currentTime - lastRenderTime;
-      
-      if (renderTime > 16) { // More than 60fps
+
+      if (renderTime > 16) {
         console.warn(`Editor layout change took ${renderTime}ms`);
       }
-      
+
       lastRenderTime = currentTime;
     });
   }
