@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import Editor, { Monaco } from '@monaco-editor/react';
 import { useEditorStore } from '../store/editorStore';
 import { useFileStore } from '../store/fileStore';
 import * as monaco from 'monaco-editor';
@@ -7,6 +6,8 @@ import { EditorEngine } from './EditorEngine';
 import { EditorService } from '../services/EditorService';
 import { EditorCommands } from './EditorCommands';
 import EditorToolbar from '../components/EditorToolbar';
+import EditorBase from './EditorBase';
+import { EditorProviders } from './EditorProviders';
 import './MonacoEnvironment';
 
 const getLanguage = (filename: string): string => {
@@ -32,77 +33,14 @@ const EditorComponent: React.FC = () => {
   const [isSplit, setIsSplit] = useState(false);
   const [activeEditor, setActiveEditor] = useState<'primary' | 'secondary'>('primary');
   const editorEngine = EditorEngine.getInstance();
-  const editorService = EditorService.getInstance();
   const editorCommands = EditorCommands.getInstance();
 
-  const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor, monaco: Monaco) => {
+  const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor, monaco: monaco.Monaco) => {
     editorRef.current = editor;
     setEditor(editor);
     editorEngine.setEditor(editor);
-    
-    editor.updateOptions({
-      lineNumbers: 'on',
-      folding: true,
-      foldingHighlight: true,
-      showFoldingControls: 'always',
-      minimap: {
-        enabled: true,
-        showSlider: 'always',
-        renderCharacters: false,
-        maxColumn: 120,
-        scale: 1
-      },
-      glyphMargin: true,
-      lineDecorationsWidth: 10,
-      lineNumbersMinChars: 3,
-      scrollBeyondLastLine: false,
-      wordWrap: 'on',
-      wrappingIndent: 'indent',
-      bracketPairColorization: {
-        enabled: true,
-      },
-      guides: {
-        bracketPairs: true,
-        indentation: true,
-        highlightActiveIndentation: true,
-        bracketPairsHorizontal: true
-      },
-      renderWhitespace: 'selection',
-      scrollbar: {
-        vertical: 'visible',
-        horizontal: 'visible',
-        verticalScrollbarSize: 12,
-        horizontalScrollbarSize: 12,
-        useShadows: true
-      },
-      inlineSuggest: {
-        enabled: true
-      },
-      occurrencesHighlight: true,
-      renderLineHighlight: 'all',
-      suggestOnTriggerCharacters: true,
-      codeLens: true,
-      inlayHints: {
-        enabled: true
-      },
-      padding: {
-        top: 5,
-        bottom: 5
-      }
-    });
-
     editorCommands.registerCommands(editor, monaco);
-
-    monaco.languages.registerHoverProvider('*', {
-      provideHover: (model, position) => {
-        return {
-          contents: [
-            { value: '**Hover Info**' },
-            { value: 'This is a sample hover provider. Replace with actual documentation.' }
-          ]
-        };
-      }
-    });
+    EditorProviders.setupProviders(editor, monaco);
   };
 
   const handleEditorChange = (value: string | undefined) => {
@@ -113,89 +51,54 @@ const EditorComponent: React.FC = () => {
 
   useEffect(() => {
     if (!currentFile) return;
-
-    const handleCursorPositionChanged = (e: any) => {
-      console.log('Cursor position changed:', e.position);
-    };
-
-    const handleSelectionChanged = (e: any) => {
-      console.log('Selection changed');
-    };
-
-    const handleSave = (data: any) => {
-      if (currentFile && editorRef.current) {
-        updateFileContent(currentFile, editorRef.current.getValue());
-        console.log('File saved:', currentFile);
-      }
-    };
-
-    editorEngine.on('cursorPositionChanged', handleCursorPositionChanged);
-    editorEngine.on('selectionChanged', handleSelectionChanged);
-    editorEngine.on('save', handleSave);
-
-    return () => {
-      editorEngine.off('cursorPositionChanged', handleCursorPositionChanged);
-      editorEngine.off('selectionChanged', handleSelectionChanged);
-      editorEngine.off('save', handleSave);
-    };
-  }, [currentFile, editorEngine, updateFileContent]);
-
-  const renderEditor = (isPrimary: boolean) => (
-    <Editor
-      height="100%"
-      defaultLanguage={getLanguage(currentFile || '')}
-      defaultValue={currentFile ? getFileContent(currentFile) : ''}
-      onMount={handleEditorDidMount}
-      onChange={handleEditorChange}
-      options={{
-        ...editorService.getDefaultEditorOptions(),
-        readOnly: !isPrimary,
-        theme: 'vs-dark',
-        fontFamily: "'Fira Code', 'Cascadia Code', 'Source Code Pro', monospace",
-        fontLigatures: true,
-        fontSize: 14,
-        mouseWheelZoom: true,
-        cursorBlinking: 'smooth',
-        cursorSmoothCaretAnimation: true,
-        smoothScrolling: true,
-        formatOnPaste: true,
-        formatOnType: true,
-      }}
-      theme="custom-dark"
-    />
-  );
+    
+    const cleanup = EditorProviders.setupEventListeners(editorRef.current!);
+    return cleanup;
+  }, [currentFile]);
 
   return (
     <div className="h-full w-full flex flex-col">
       <EditorToolbar />
       <div className="flex-1">
-        {currentFile ? (
-          isSplit ? (
-            <div className="grid grid-cols-2 h-full">
-              <div 
-                className={`border-r border-[#3d3d3d] ${activeEditor === 'primary' ? 'bg-[#1e1e1e]' : 'bg-[#2d2d2d]'}`}
-                onClick={() => setActiveEditor('primary')}
-              >
-                {renderEditor(true)}
-              </div>
-              <div 
-                className={activeEditor === 'secondary' ? 'bg-[#1e1e1e]' : 'bg-[#2d2d2d]'}
-                onClick={() => setActiveEditor('secondary')}
-              >
-                {renderEditor(false)}
-              </div>
+        {isSplit ? (
+          <div className="grid grid-cols-2 h-full">
+            <div 
+              className={`border-r border-[#3d3d3d] ${activeEditor === 'primary' ? 'bg-[#1e1e1e]' : 'bg-[#2d2d2d]'}`}
+              onClick={() => setActiveEditor('primary')}
+            >
+              <EditorBase
+                currentFile={currentFile}
+                content={currentFile ? getFileContent(currentFile) : ''}
+                language={getLanguage(currentFile || '')}
+                isPrimary={true}
+                onMount={handleEditorDidMount}
+                onChange={handleEditorChange}
+              />
             </div>
-          ) : (
-            <div className="h-full bg-[#1e1e1e]">
-              {renderEditor(true)}
+            <div 
+              className={activeEditor === 'secondary' ? 'bg-[#1e1e1e]' : 'bg-[#2d2d2d]'}
+              onClick={() => setActiveEditor('secondary')}
+            >
+              <EditorBase
+                currentFile={currentFile}
+                content={currentFile ? getFileContent(currentFile) : ''}
+                language={getLanguage(currentFile || '')}
+                isPrimary={false}
+                onMount={handleEditorDidMount}
+                onChange={handleEditorChange}
+              />
             </div>
-          )
+          </div>
         ) : (
-          <div className="h-full w-full flex items-center justify-center text-[#858585]">
-            <div className="text-center">
-              <p className="text-lg">No file selected</p>
-              <p className="text-sm mt-2">Select a file from the explorer to start editing</p>
-            </div>
+          <div className="h-full bg-[#1e1e1e]">
+            <EditorBase
+              currentFile={currentFile}
+              content={currentFile ? getFileContent(currentFile) : ''}
+              language={getLanguage(currentFile || '')}
+              isPrimary={true}
+              onMount={handleEditorDidMount}
+              onChange={handleEditorChange}
+            />
           </div>
         )}
       </div>
