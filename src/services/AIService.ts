@@ -14,31 +14,40 @@ interface AIState {
 export const useAIStore = create<AIState>((set) => ({
   features: [
     {
-      id: 'explain',
+      id: 'explain-code',
       name: 'Explain Code',
-      description: 'Explain selected code',
+      description: 'Get detailed explanations of selected code',
       trigger: 'contextMenu',
-      shortcut: 'Ctrl+Shift+E',
-      icon: 'info',
+      shortcut: 'Ctrl+Alt+E',
+      icon: 'brain',
       enabled: true,
     },
     {
       id: 'refactor',
       name: 'Refactor Code',
-      description: 'Clean up / optimize code',
+      description: 'Get suggestions for code improvements and optimizations',
       trigger: 'contextMenu',
-      shortcut: 'Ctrl+Shift+R',
+      shortcut: 'Ctrl+Alt+R',
       icon: 'wand',
       enabled: true,
     },
     {
-      id: 'tests',
+      id: 'generate-tests',
       name: 'Generate Tests',
-      description: 'Auto-generate unit tests',
-      trigger: 'sidebar',
+      description: 'Auto-generate unit tests for selected code',
+      trigger: 'contextMenu',
+      shortcut: 'Ctrl+Alt+T',
       icon: 'code',
       enabled: true,
     },
+    {
+      id: 'complete-code',
+      name: 'Complete Code',
+      description: 'Get intelligent code completion suggestions',
+      trigger: 'inline',
+      icon: 'sparkles',
+      enabled: true,
+    }
   ],
   provider: null,
   responses: [],
@@ -51,7 +60,7 @@ export const useAIStore = create<AIState>((set) => ({
     })),
   addResponse: (response) =>
     set((state) => ({
-      responses: [...state.responses, response],
+      responses: [...state.responses.slice(-4), response],
     })),
 }));
 
@@ -69,23 +78,21 @@ export class AIService {
   }
 
   public async explainCode(context: AIContext): Promise<AIResponse> {
-    // Implementation will be added when connected to an AI provider
     const response: AIResponse = {
-      text: "Code explanation will be implemented when connected to an AI provider",
+      text: "This code implements... (explanation will be integrated with AI provider)",
       tokens: 0,
-      model: "none",
+      model: "demo",
       timestamp: Date.now()
     };
     this.store.getState().addResponse(response);
     return response;
   }
 
-  public async refactorCode(context: AIContext): Promise<AIResponse> {
-    // Implementation will be added when connected to an AI provider
+  public async suggestRefactor(context: AIContext): Promise<AIResponse> {
     const response: AIResponse = {
-      text: "Code refactoring will be implemented when connected to an AI provider",
+      text: "Consider refactoring... (suggestions will be integrated with AI provider)",
       tokens: 0,
-      model: "none",
+      model: "demo",
       timestamp: Date.now()
     };
     this.store.getState().addResponse(response);
@@ -93,11 +100,10 @@ export class AIService {
   }
 
   public async generateTests(context: AIContext): Promise<AIResponse> {
-    // Implementation will be added when connected to an AI provider
     const response: AIResponse = {
-      text: "Test generation will be implemented when connected to an AI provider",
+      text: "describe('Component', () => {...}) (tests will be integrated with AI provider)",
       tokens: 0,
-      model: "none",
+      model: "demo",
       timestamp: Date.now()
     };
     this.store.getState().addResponse(response);
