@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+
+import React from 'react';
 import { X, LayoutGrid, ChevronRight } from 'lucide-react';
 import { useFileStore } from '../store/fileStore';
 
-const EditorToolbar: React.FC = () => {
+interface EditorToolbarProps {
+  isSplit: boolean;
+  onToggleSplit: () => void;
+}
+
+const EditorToolbar: React.FC<EditorToolbarProps> = ({ isSplit, onToggleSplit }) => {
   const { currentFile, closeFile } = useFileStore();
-  const [isSplit, setIsSplit] = useState(false);
 
   if (!currentFile) return null;
 
@@ -44,8 +49,8 @@ const EditorToolbar: React.FC = () => {
         <div className="flex-1" />
         <div className="flex items-center space-x-2">
           <button
-            className="p-1 hover:bg-[#3d3d3d] rounded text-[#cccccc]"
-            onClick={() => setIsSplit(!isSplit)}
+            className={`p-1 hover:bg-[#3d3d3d] rounded text-[#cccccc] ${isSplit ? 'bg-[#3d3d3d]' : ''}`}
+            onClick={onToggleSplit}
             title={isSplit ? "Join Views" : "Split View"}
           >
             <LayoutGrid className="w-4 h-4" />
@@ -56,4 +61,4 @@ const EditorToolbar: React.FC = () => {
   );
 };
 
-export default EditorToolbar; 
+export default EditorToolbar;

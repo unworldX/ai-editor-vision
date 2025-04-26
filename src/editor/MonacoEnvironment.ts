@@ -1,23 +1,23 @@
+
+import * as monaco from 'monaco-editor';
+import { defineMonacoThemes, configureLanguages, setupMonacoWorkers } from './EditorConfiguration';
+
 /**
- * Sets up the Monaco environment for web workers
- * This is needed for Monaco editor to work properly in the browser
+ * Sets up the Monaco environment for web workers and configures Monaco editor
  */
 export const setupMonacoEnvironment = (): void => {
-  if (typeof window !== "undefined") {
-    (window as any).MonacoEnvironment = {
-      getWorker: (_: string, label: string) => {
-        const workerMap: { [key: string]: string } = {
-          json: "monaco-editor/esm/vs/language/json/json.worker?worker",
-          css: "monaco-editor/esm/vs/language/css/css.worker?worker",
-          html: "monaco-editor/esm/vs/language/html/html.worker?worker",
-          typescript: "monaco-editor/esm/vs/language/typescript/ts.worker?worker",
-          javascript: "monaco-editor/esm/vs/language/typescript/ts.worker?worker",
-        };
-        return new Worker(workerMap[label] || "monaco-editor/esm/vs/editor/editor.worker?worker", { type: "module" });
-      },
-    };
-  }
+  // Set up web workers
+  setupMonacoWorkers();
+  
+  // Define custom themes
+  defineMonacoThemes(monaco);
+  
+  // Configure languages
+  configureLanguages(monaco);
+  
+  // Set the default theme
+  monaco.editor.setTheme('custom-dark');
 };
 
-// Call the setup function immediately
-setupMonacoEnvironment(); 
+// Initialize Monaco environment
+setupMonacoEnvironment();

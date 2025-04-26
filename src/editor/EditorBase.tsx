@@ -2,7 +2,6 @@
 import React from 'react';
 import Editor from '@monaco-editor/react';
 import { getEditorOptions } from './EditorConfiguration';
-import { EditorService } from '../services/EditorService';
 
 interface EditorBaseProps {
   currentFile: string | null;
@@ -21,8 +20,6 @@ const EditorBase: React.FC<EditorBaseProps> = ({
   onMount,
   onChange,
 }) => {
-  const editorService = EditorService.getInstance();
-
   if (!currentFile) {
     return (
       <div className="h-full w-full flex items-center justify-center text-[#858585]">
@@ -41,14 +38,10 @@ const EditorBase: React.FC<EditorBaseProps> = ({
       defaultValue={content}
       onMount={onMount}
       onChange={onChange}
-      options={{
-        ...editorService.getDefaultEditorOptions(),
-        ...getEditorOptions(isPrimary),
-      }}
+      options={getEditorOptions(isPrimary)}
       theme="custom-dark"
     />
   );
 };
 
 export default EditorBase;
-
