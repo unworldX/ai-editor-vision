@@ -40,8 +40,69 @@ const EditorComponent: React.FC = () => {
     setEditor(editor);
     editorEngine.setEditor(editor);
     
-    // Register all commands
+    editor.updateOptions({
+      lineNumbers: 'on',
+      folding: true,
+      foldingHighlight: true,
+      showFoldingControls: 'always',
+      minimap: {
+        enabled: true,
+        showSlider: 'always',
+        renderCharacters: false,
+        maxColumn: 120,
+        scale: 1
+      },
+      glyphMargin: true,
+      lineDecorationsWidth: 10,
+      lineNumbersMinChars: 3,
+      scrollBeyondLastLine: false,
+      wordWrap: 'on',
+      wrappingIndent: 'indent',
+      bracketPairColorization: {
+        enabled: true,
+      },
+      guides: {
+        bracketPairs: true,
+        indentation: true,
+        highlightActiveIndentation: true,
+        bracketPairsHorizontal: true
+      },
+      renderWhitespace: 'selection',
+      scrollbar: {
+        vertical: 'visible',
+        horizontal: 'visible',
+        verticalScrollbarSize: 12,
+        horizontalScrollbarSize: 12,
+        useShadows: true
+      },
+      inlineSuggest: {
+        enabled: true
+      },
+      occurrencesHighlight: true,
+      renderLineHighlight: 'all',
+      suggestOnTriggerCharacters: true,
+      codeLens: true,
+      inlayHints: {
+        enabled: true
+      },
+      padding: {
+        top: 5,
+        bottom: 5
+      }
+    });
+
     editorCommands.registerCommands(editor, monaco);
+
+    monaco.languages.registerHoverProvider('*', {
+      provideHover: (model, position) => {
+        return {
+          contents: [
+            { value: '**Hover Info**' },
+            { value: 'This is a sample hover provider. Replace with actual documentation.' }
+          ]
+        };
+      }
+    });
   };
 
   const handleEditorChange = (value: string | undefined) => {
@@ -53,7 +114,6 @@ const EditorComponent: React.FC = () => {
   useEffect(() => {
     if (!currentFile) return;
 
-    // Set up event listeners
     const handleCursorPositionChanged = (e: any) => {
       console.log('Cursor position changed:', e.position);
     };
@@ -90,6 +150,16 @@ const EditorComponent: React.FC = () => {
       options={{
         ...editorService.getDefaultEditorOptions(),
         readOnly: !isPrimary,
+        theme: 'vs-dark',
+        fontFamily: "'Fira Code', 'Cascadia Code', 'Source Code Pro', monospace",
+        fontLigatures: true,
+        fontSize: 14,
+        mouseWheelZoom: true,
+        cursorBlinking: 'smooth',
+        cursorSmoothCaretAnimation: true,
+        smoothScrolling: true,
+        formatOnPaste: true,
+        formatOnType: true,
       }}
       theme="custom-dark"
     />
