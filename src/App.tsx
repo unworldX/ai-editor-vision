@@ -8,10 +8,8 @@ import { ActivityBar } from './components/ActivityBar';
 import { TitleBar } from './components/TitleBar';
 import { Splitter } from './components/Splitter';
 import { useExtensionStore } from './store/extensionStore';
-import { Extension } from './types/extension';
-import { EditorEngine } from './editor/EditorEngine';
-import { EditorService } from './services/EditorService';
-import { MonacoService } from './services/MonacoService';
+import { AISidebar } from './components/AISidebar';
+
 const demoExtension: Extension = {
   id: 'demo-extension',
   name: 'Code Formatter',
@@ -47,7 +45,6 @@ const demoExtension: Extension = {
   },
 };
 
-
 const App: React.FC = () => {
   const { addExtension } = useExtensionStore();
 
@@ -73,9 +70,12 @@ const App: React.FC = () => {
             </div>
           </div>
           <div className="h-full flex flex-col">
-            <div className="flex-1 flex flex-col">
-              <EditorComponent />
-              <Terminal />
+            <div className="flex-1 flex">
+              <div className="flex-1 flex flex-col">
+                <EditorComponent />
+                <Terminal />
+              </div>
+              <AISidebar />
             </div>
           </div>
         </Splitter>
