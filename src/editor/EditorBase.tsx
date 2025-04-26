@@ -1,7 +1,7 @@
 
 import React from 'react';
 import Editor from '@monaco-editor/react';
-import { getEditorOptions } from './EditorConfiguration';
+import { defaultEditorOptions } from './monaco.config';
 
 interface EditorBaseProps {
   currentFile: string | null;
@@ -16,17 +16,13 @@ const EditorBase: React.FC<EditorBaseProps> = ({
   currentFile,
   content,
   language,
-  isPrimary = true,
   onMount,
   onChange,
 }) => {
   if (!currentFile) {
     return (
       <div className="h-full w-full flex items-center justify-center text-[#858585]">
-        <div className="text-center">
-          <p className="text-lg">No file selected</p>
-          <p className="text-sm mt-2">Select a file from the explorer to start editing</p>
-        </div>
+        <p className="text-lg">No file selected</p>
       </div>
     );
   }
@@ -38,7 +34,7 @@ const EditorBase: React.FC<EditorBaseProps> = ({
       defaultValue={content}
       onMount={onMount}
       onChange={onChange}
-      options={getEditorOptions(isPrimary)}
+      options={defaultEditorOptions}
       theme="custom-dark"
     />
   );
