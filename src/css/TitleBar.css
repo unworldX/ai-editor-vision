@@ -1,0 +1,38 @@
+/* TitleBar.css */
+
+/* Menu Toggle Button */
+.menu-toggle {
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  /* Menu Items Container */
+  .menu-items {
+    display: flex;
+    gap: 8px;
+    transform: translateX(-100%);
+    opacity: 0;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    position: absolute;
+    left: 40px;
+  }
+  
+  /* When menu is open */
+  .menu-items.open {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  
+  /* Individual Menu Item */
+  .menu-item {
+    cursor: pointer;
+    padding: 4px 8px;
+    transition: background 0.2s ease-in-out;
+  }
+  
+  /* Hover Effect */
+  .menu-item:hover {
+    background: #505050;
+    border-radius: 3px;
+  }
+  

@@ -1,49 +1,33 @@
-
 import React from 'react';
-import { Sidebar, SidebarContent, SidebarGroup, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
-import { FolderOpen, Search, GitBranch, Bug, Package, TestTube } from 'lucide-react';
-import { cn } from '@/lib/utils';
-
-interface ActivityBarProps {
-  activeSection?: string;
-  onSectionChange: (section: string) => void;
-}
+import { Files, Search, GitBranch, Bug } from 'lucide-react';
 
 const activities = [
-  { id: 'explorer', icon: FolderOpen, label: 'Explorer' },
-  { id: 'search', icon: Search, label: 'Search' },
-  { id: 'source-control', icon: GitBranch, label: 'Source Control' },
-  { id: 'run-debug', icon: Bug, label: 'Run and Debug' },
-  { id: 'extensions', icon: Package, label: 'Extensions' },
-  { id: 'testing', icon: TestTube, label: 'Testing' }
+  { icon: Files, label: 'Explorer', active: true },
+  { icon: Search, label: 'Search' },
+  { icon: GitBranch, label: 'Source Control' },
+  { icon: Bug, label: 'Run and Debug' },
 ];
 
-const ActivityBar: React.FC<ActivityBarProps> = ({ activeSection, onSectionChange }) => {
+export const ActivityBar: React.FC = () => {
   return (
-    <Sidebar variant="floating" collapsible="icon">
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarMenu>
-            {activities.map((activity) => (
-              <SidebarMenuItem key={activity.id}>
-                <SidebarMenuButton
-                  tooltip={activity.label}
-                  onClick={() => onSectionChange(activity.id)}
-                  className={cn(
-                    'w-full justify-center',
-                    activeSection === activity.id && 'bg-secondary'
-                  )}
-                >
-                  <activity.icon className="h-5 w-5" />
-                  <span className="sr-only">{activity.label}</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
+    <div className="bg-[#333333] flex flex-row items-center h-8 border-b border-[#2d2d2d]">
+      {activities.map(({ icon: Icon, label, active }) => (
+        <button
+          key={label}
+          className={`h-full px-3 flex items-center justify-center group relative ${
+            active ? 'text-white' : 'text-[#858585] hover:text-white'
+          }`}
+          title={label}
+        >
+          <div
+            className={`absolute top-0 h-0.5 w-full bg-white transform ${
+              active ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+            }`}
+          />
+          <Icon className="w-4 h-4 mr-1" />
+          <span className="text-xs"></span>
+        </button>
+      ))}
+    </div>
   );
 };
-
-export default ActivityBar;
