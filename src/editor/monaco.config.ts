@@ -2,6 +2,7 @@
 import * as monaco from 'monaco-editor';
 
 export const configureMonaco = () => {
+  // Configure TypeScript settings
   monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
     target: monaco.languages.typescript.ScriptTarget.ESNext,
     allowNonTsExtensions: true,

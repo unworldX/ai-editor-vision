@@ -5,7 +5,6 @@ import { useFileStore } from '../store/fileStore';
 import EditorBase from './EditorBase';
 import { getLanguageFromFilename } from './EditorLanguages';
 import { configureMonaco } from './monaco.config';
-import * as monaco from 'monaco-editor';
 
 const EditorComponent: React.FC = () => {
   const { setEditor } = useEditorStore();
@@ -15,7 +14,7 @@ const EditorComponent: React.FC = () => {
     configureMonaco();
   }, []);
 
-  const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor) => {
+  const handleEditorDidMount = (editor: any, monaco: any) => {
     setEditor(editor);
   };
 

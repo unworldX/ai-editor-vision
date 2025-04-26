@@ -1,7 +1,4 @@
 
-/**
- * Maps file extensions to Monaco editor language identifiers
- */
 export const getLanguageFromFilename = (filename: string): string => {
   if (!filename) return 'plaintext';
   
@@ -31,7 +28,6 @@ export const getLanguageFromFilename = (filename: string): string => {
     env: 'plaintext'
   };
   
-  // Get file extension or name for special files
   const parts = filename.split('/');
   const lastPart = parts[parts.length - 1];
   const extension = lastPart.includes('.')
